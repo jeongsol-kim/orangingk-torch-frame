@@ -1,6 +1,12 @@
+import os
+from pathlib import Path
+import getpass
 import json 
 import requests
 
+cut_fn = lambda msg: msg.split('. ')[0].split('.\n')[0]
+current_project = Path(os.getcwd()).stem
+prompt = lambda msg: f"[{getpass.getuser()}/{current_project}]: {cut_fn(msg)}."
 
 def read_my_setting():
     try:
@@ -15,7 +21,7 @@ def slack_send_msg(msg):
 
     requests.post("https://slack.com/api/chat.postMessage",
         headers={"Authorization": "Bearer "+token},
-        data={"channel": channel,"text": msg})
+        data={"channel": channel,"text": prompt(msg)})
     
 if __name__ == '__main__':
     slack_send_msg('test message')
